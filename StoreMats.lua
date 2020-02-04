@@ -12,8 +12,8 @@ local res_items = nil
 local config = require('config')
 local default = {
 	always_bring_to_inventory = S{'Echo Drops', 'Sole Sushi'}, -- Force getting items you always want in your inventory. Will pull them from all available bags.
-	keep_in_inventory = S{'linkpearl','linkshell','Copper Voucher','Silver Voucher','Beastmen\'s Seal','Kindred\'s Seal','Kindred\'s Crest','High Kindred\'s Crest','Sacred Kindred\'s Crest'}, -- Items you wish to always remain in your inventory if they are already there...
-	keep_single_stack_only = S{'Prism Powder','Silent Oil','Remedy'--[[,'Shihei']]}, -- items you wish to keep a single stack of in your inventory, if they are already there.
+	keep_in_inventory = S{'linkpearl','linkshell','Copper Voucher','Silver Voucher'}, -- Items you wish to always remain in your inventory if they are already there...
+	keep_single_stack_only = S{'Prism Powder','Silent Oil','Remedy'}, -- items you wish to keep a single stack of in your inventory, if they are already there.
 	storable_bags = S{ 'satchel', 'sack', 'case' }, -- The bags you wish to store items
 	store_usable_items = true, -- setting this to false will keep things like food, silent oils, ect. in your inventory
 	small_footprint = true,
@@ -333,16 +333,15 @@ function get_player_items()
 end
 
 function validate_item(itemname)
-	if not itemname then return false end
+	if not itemname then return end
 	
 	res_items = require('resources').items
 	for i, item in pairs(res_items) do
-		if item.name:contains(itemname) then 
-			return true 
+		if item.en:contains(itemname) or item.enl:contains(itemname) then 
+			--log(item.en)
+			return item.en 
 		end
 	end
-	
-	return false
 end
 function validate_bag(bagname) if bags:contains(bagname) then return true else return false end end
 
@@ -411,7 +410,9 @@ windower.register_event('addon command', function (...)
 			if commands[2] and commands[2]:lower() == 'add' or commands[2]:lower() == 'a' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if not settings.always_bring_to_inventory:contains(commands[3]) then
 						settings.always_bring_to_inventory:add(commands[3])
 						config.save(settings)
@@ -423,7 +424,9 @@ windower.register_event('addon command', function (...)
 			elseif commands[2] and commands[2]:lower() == 'remove' or commands[2]:lower() == 'r' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if settings.always_bring_to_inventory:contains(commands[3]) then
 						settings.always_bring_to_inventory:remove(commands[3])
 						config.save(settings)
@@ -440,7 +443,9 @@ windower.register_event('addon command', function (...)
 			if commands[2] and commands[2]:lower() == 'add' or commands[2]:lower() == 'a' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if not settings.keep_single_stack_only:contains(commands[3]) then
 						settings.keep_single_stack_only:add(commands[3])
 						config.save(settings)
@@ -452,7 +457,9 @@ windower.register_event('addon command', function (...)
 			elseif commands[2] and commands[2]:lower() == 'remove' or commands[2]:lower() == 'r' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if settings.keep_single_stack_only:contains(commands[3]) then
 						settings.keep_single_stack_only:remove(commands[3])
 						config.save(settings)
@@ -469,7 +476,9 @@ windower.register_event('addon command', function (...)
 			if commands[2] and commands[2]:lower() == 'add' or commands[2]:lower() == 'a' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if not settings.keep_in_inventory:contains(commands[3]) then
 						settings.keep_in_inventory:add(commands[3])
 						config.save(settings)
@@ -481,7 +490,9 @@ windower.register_event('addon command', function (...)
 			elseif commands[2] and commands[2]:lower() == 'remove' or commands[2]:lower() == 'r' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
-				if commands[3] and validate_item(commands[3]) then
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
+				local itemname = validate_item(commands[3])
+				if commands[3] and itemname then
 					if settings.keep_in_inventory:contains(commands[3]) then
 						settings.keep_in_inventory:remove(commands[3])
 						config.save(settings)
@@ -498,6 +509,7 @@ windower.register_event('addon command', function (...)
 			if commands[2] and commands[2]:lower() == 'add' or commands[2]:lower() == 'a' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
 				if commands[3] and validate_bag(commands[3]) then
 					if not settings.storable_bags:contains(commands[3]) then
 						settings.storable_bags:add(commands[3])
@@ -511,6 +523,7 @@ windower.register_event('addon command', function (...)
 			elseif commands[2] and commands[2]:lower() == 'remove' or commands[2]:lower() == 'r' then
 				commands[3] = windower.convert_auto_trans(commands[3])
 				if commands[4] then commands[3] = commands[3]..' '..commands[4] end
+				if commands[5] then commands[3] = commands[3]..' '..commands[5] end
 				if commands[3] and validate_bag(commands[3]) then
 					if settings.storable_bags:contains(commands[3]) then
 						settings.storable_bags:remove(commands[3])
