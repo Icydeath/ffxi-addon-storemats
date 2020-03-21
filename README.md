@@ -1,6 +1,9 @@
 # StoreMats
 FFXI Windower4 addon - Item consolidator/organizer with config settings.
 
+- [Results ss 1](/smats_example1.png)
+- [Results ss 2](/smats_example2.png)
+
 *** REQUIRES THE ITEMIZER ADDON ***
 
 	data/settings.xml
