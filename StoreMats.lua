@@ -1,9 +1,8 @@
 _addon.author = 'Icy'
 _addon.commands = {'StoreMats', 'smats', 'store'}
 _addon.name = 'StoreMats'
-_addon.version = '1.0.1'
+_addon.version = '1.0.2'
 
---local inspect = require('inspect')
 require('tables')
 require('strings')
 require('logger')
@@ -32,7 +31,6 @@ function run()
 	player = windower.ffxi.get_player()
 	
 	local storages = get_player_items()
-	--log(inspect(storages))
 	
 	local haystack = {}
 	local results = 0
@@ -78,11 +76,10 @@ function run()
 	end
 	log(' [', results, 'item(s) consolidated. ]')
 	
-	--log(inspect(puts))
 	if results > 0 then
 		storages = get_player_items()
 		local storable_bags_space = get_storable_bags_space(storages)
-		--log(inspect(storable_bags_space))
+		
 		log('')
 		log('Attempting to store items that were consolidated.')
 		
@@ -337,7 +334,7 @@ function validate_item(itemname)
 	
 	res_items = require('resources').items
 	for i, item in pairs(res_items) do
-		if item.en:contains(itemname) or item.enl:contains(itemname) then 
+		if item.en:lower():contains(itemname) or item.enl:lower():contains(itemname) then 
 			--log(item.en)
 			return item.en 
 		end
